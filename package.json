@@ -1,0 +1,17 @@
+{
+  "name": "messagerie-websocket",
+  "version": "1.0.0",
+  "description": "Messagerie en temps réel avec WebSocket",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "nodemon server/server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "ws": "^8.13.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
