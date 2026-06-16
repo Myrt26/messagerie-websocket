@@ -117,13 +117,15 @@
         const clientIdDisplay = document.getElementById('clientId');
         const connectionStatus = document.getElementById('connectionStatus');
 
-        // Fonction pour se connecter
+        // 🔥 FONCTION CONNEXION AUTO - MISE À JOUR ICI 🔥
         function connectWebSocket() {
-            // Pour le test local
-            let wsUrl = 'ws://localhost:3000';
+            // Détection automatique : local ou en ligne
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            const protocol = isLocal ? 'ws:' : 'wss:';
+            const host = isLocal ? 'localhost:3000' : window.location.host;
+            const wsUrl = `${protocol}//${host}`;
             
-            // Pour Render (décommenter quand déployé)
-            // wsUrl = 'wss://ton-app-sur-render.onrender.com';
+            console.log(`🔗 Tentative de connexion à: ${wsUrl}`);
             
             try {
                 ws = new WebSocket(wsUrl);
@@ -132,6 +134,7 @@
                     isConnected = true;
                     updateConnectionStatus(true);
                     addSystemMessage('✅ Connecté au serveur');
+                    console.log('✅ WebSocket connecté');
                 };
                 
                 ws.onmessage = (event) => {
@@ -139,7 +142,7 @@
                         const data = JSON.parse(event.data);
                         handleMessage(data);
                     } catch (error) {
-                        console.error('Erreur:', error);
+                        console.error('Erreur de parsing:', error);
                     }
                 };
                 
@@ -147,6 +150,7 @@
                     isConnected = false;
                     updateConnectionStatus(false);
                     addSystemMessage('❌ Déconnecté - Reconnexion dans 3s...');
+                    console.log('❌ WebSocket déconnecté');
                     
                     // Reconnexion automatique
                     setTimeout(() => {
@@ -155,11 +159,13 @@
                 };
                 
                 ws.onerror = (error) => {
-                    console.error('Erreur WebSocket:', error);
+                    console.error('❌ Erreur WebSocket:', error);
+                    addSystemMessage('⚠️ Erreur de connexion - tentative de reconnexion...');
                 };
                 
             } catch (error) {
-                console.error('Erreur:', error);
+                console.error('❌ Erreur:', error);
+                addSystemMessage('❌ Impossible de se connecter');
             }
         }
 
